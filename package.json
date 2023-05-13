@@ -5,7 +5,18 @@
   "scripts": {
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "eslint --ext .js,.vue src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
