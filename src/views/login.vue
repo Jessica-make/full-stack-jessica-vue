@@ -1,9 +1,14 @@
 <template>
   <div class="login">
-    <el-form class="login-form" :model="loginForm">
+    <el-form
+      class="login-form"
+      :model="loginForm"
+      :rules="loginRules"
+      ref="loginForm"
+    >
       <h3 class="title">小龙后台管理系统</h3>
 
-      <el-form-item>
+      <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
           placeholder="账号"
@@ -11,7 +16,7 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="password">
         <el-input
           v-model="loginForm.password"
           placeholder="密码"
@@ -19,7 +24,7 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="code" v-if="captchaEnabled">
         <el-input
           style="width: 63%"
           v-model="loginForm.code"
@@ -36,7 +41,11 @@
         >记住密码</el-checkbox
       >
       <el-form-item style="width: 100%">
-        <el-button type="primary" style="width: 100%">
+        <el-button
+          type="primary"
+          style="width: 100%"
+          @click.native="handleLogin"
+        >
           <span>登录</span>
         </el-button>
       </el-form-item>
@@ -59,10 +68,22 @@ export default {
         username: "",
         password: "",
         code: "",
+        uuid: "",
         rememberMe: false,
       },
       codeUrl: "",
       captchaEnabled: true,
+
+      //登录输入校验
+      loginRules: {
+        username: [
+          { required: true, trigger: "blur", message: "请输入您的账号" },
+        ],
+        password: [
+          { required: true, trigger: "blur", message: "请输入您的密码" },
+        ],
+        code: [{ required: true, trigger: "change", message: "请输入验证码" }],
+      },
     };
   },
   created() {
@@ -71,11 +92,32 @@ export default {
   methods: {
     getCode() {
       getCodeImg().then((res) => {
-        this.captchaEnabled =res.captchaEnabled === undefined ? true : res.captchaEnabled;
-        if(this.captchaEnabled){
-          this.codeUrl="data:image/gif;base64," +res.img
+        this.captchaEnabled =
+          res.captchaEnabled === undefined ? true : res.captchaEnabled;
+        if (this.captchaEnabled) {
+          this.codeUrl = "data:image/gif;base64," + res.img;
+        }
+        this.loginForm.uuid = res.uuid;
+      });
+    },
+
+    handleLogin() {
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          this.$store.dispatch("Login", this.loginForm).then(() => {
+            this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+          }).catch(() => {
+            //异常提示显示 已经在request.js处理了，这里只需要关闭
+            // 加载中状态和重新获取验证码
+            this.loading = false;
+            if (this.captchaEnabled) {
+              this.getCode();
+            }
+          });
+
         }
       });
+
     },
   },
 };
