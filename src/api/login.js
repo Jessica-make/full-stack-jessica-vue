@@ -23,3 +23,29 @@ export function login(username,password,code,uuid){
         data
     })
 }
+
+// 获取用户详细信息
+export function getInfo() {
+    return request({
+      url: '/getInfo',
+      method: 'get'
+    })
+    
+  }
+
+
+  // 获取路由
+export const getRouters = () => {
+  return request({
+    url: '/getRouters',
+    method: 'get'
+  })
+}
+
+// 退出方法
+export function logout() {
+    return request({
+      url: '/logout',
+      method: 'post'
+    })
+  }  

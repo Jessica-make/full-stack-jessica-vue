@@ -29,6 +29,7 @@
           style="width: 63%"
           v-model="loginForm.code"
           placeholder="验证码"
+          @keyup.enter.native="handleLogin"
         ></el-input>
         <div class="login-code">
           <img :src="codeUrl" class="login-code-img" alt="" @click="getCode" />
@@ -73,6 +74,7 @@ export default {
       },
       codeUrl: "",
       captchaEnabled: true,
+      redirect:undefined,
 
       //登录输入校验
       loginRules: {
@@ -88,6 +90,14 @@ export default {
   },
   created() {
     this.getCode();
+  },
+  watch: {
+    $route: {
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect;
+      },
+      immediate: true
+    }
   },
   methods: {
     getCode() {

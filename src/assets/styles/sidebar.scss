@@ -1,0 +1,21 @@
+#app{
+    .sidebar-container{
+        width: 200px;
+        background: $base-menu-background;
+        height: 100%;
+        position: fixed;
+    
+        .el-menu{
+            border: none;
+        }
+    } 
+    
+    .main-container{
+        //距离侧边栏的距离
+        margin-left: 200px;
+        min-height: 100%;
+    }
+    .svg-icon{
+        margin-right: 15px;
+    }
+}
