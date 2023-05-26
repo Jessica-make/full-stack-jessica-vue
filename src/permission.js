@@ -17,12 +17,12 @@ router.beforeEach((to, from, next) => {
         } else {
             if (store.getters.roles.length === 0) {
                 isRelogin.show = false
-                // store.dispatch('GenerateRoutes').then(accessRoutes => {
-                //     // 根据roles权限生成可访问的路由表
-                //     router.addRoutes(accessRoutes) // 动态添加可访问路由表
-                //     next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
-                // })
-                next()
+                store.dispatch('GenerateRoutes').then(accessRoutes => {
+                     //这里无法添加 稍后处理 2023/05/25
+                    // router.addRoutes(accessRoutes) // 动态添加可访问路由表
+                    // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+                 next()
+                })
             } else {
                 next()
             }

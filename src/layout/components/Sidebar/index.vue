@@ -1,16 +1,17 @@
 <template>
     <div>
-        <logo/>
+        <logo :collapse="isCollapse"/>
         <el-scrollbar>
             <el-menu
       default-active="2"
+      :collapse="isCollapse"
       class="el-menu-vertical-demo"
       :background-color="variables.menuBackground"
       text-color="#fff"
       :unique-opened="true"
       active-text-color="#ffd04b">
       <sidebar-item 
-        v-for="(route,index) in sidebarRoutes"
+        v-for="(route,index) in sidebarRouters"
         :item="route"
         :key="route.path + index"
         :base-path="route.path"
@@ -25,30 +26,23 @@
  import Logo from './Logo.vue'
  import variables from '@/assets/styles/variables.scss'
  import SidebarItem from './SideBarItem.vue'
+ import { mapGetters } from 'vuex'
 
- import { getRouters } from '@/api/login';
 
 export default {
     name:"Sidebar",
     data(){
         return {
             variables,
-            sidebarRoutes:[]
+            isCollapse:true
         }
     },
     components:{
         Logo,
         SidebarItem
     },
-    created(){
-      this.getRoutersList()
-    },
-    methods:{
-        getRoutersList(){
-            getRouters().then(res=>{
-            this.sidebarRoutes=res.data
-        })
-      }
+    computed:{
+      ...mapGetters(['sidebarRouters'])
     }
 }
 </script>

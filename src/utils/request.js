@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import {Message,MessageBox } from 'element-ui'
+import store from '@/store'
 
 import { getToken } from '@/utils/auth'
 
@@ -40,7 +41,6 @@ service.interceptors.response.use(res=>{
     if (!isRelogin.show) {
       isRelogin.show = true;
       MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
-       console.log('1111111');
         isRelogin.show = false;
         store.dispatch('LogOut').then(() => {
           location.href = '/index';

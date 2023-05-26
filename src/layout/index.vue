@@ -1,5 +1,5 @@
 <template>
-    <div class="app-wraper">
+    <div class="app-wraper" :class="objClass">
        <side-bar class="sidebar-container"></side-bar>
        <div class="main-container">
           <div>
@@ -29,6 +29,14 @@ export default {
         AppMain
     },
     created(){
+    },
+    computed:{
+      //由vue管理的 :class 需要返回一个对象
+      objClass(){
+          return {
+            hideSidebar:true
+          }
+      }
     }
 }
 </script>
