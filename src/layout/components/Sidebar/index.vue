@@ -3,7 +3,7 @@
         <logo :collapse="isCollapse"/>
         <el-scrollbar>
             <el-menu
-      default-active="2"
+      :default-active="activeMenu"
       :collapse="isCollapse"
       class="el-menu-vertical-demo"
       :background-color="variables.menuBackground"
@@ -44,6 +44,11 @@ export default {
       ...mapGetters(['sidebarRouters','sidebar']),
       isCollapse(){
         return !this.sidebar.opened
+      },
+      activeMenu(){
+           const route=this.$route
+           const {path}=route
+           return path
       }
     }
 }

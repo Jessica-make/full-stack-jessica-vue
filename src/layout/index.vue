@@ -7,7 +7,7 @@
              <tags-view></tags-view>
           </div>
 
-          <app-main></app-main>
+          <app-main/>
        </div>
     </div>
 </template>

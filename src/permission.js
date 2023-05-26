@@ -3,7 +3,6 @@ import store from './store'
 
 import NProgress from 'nprogress'
 import { getToken } from './utils/auth'
-import { isRelogin } from '@/utils/request'
 
 const whiteList = ['/login', 'register']
 
@@ -16,13 +15,14 @@ router.beforeEach((to, from, next) => {
             NProgress.done()
         } else {
             if (store.getters.roles.length === 0) {
-                isRelogin.show = false
-                store.dispatch('GenerateRoutes').then(accessRoutes => {
-                     //这里无法添加 稍后处理 2023/05/25
-                    // router.addRoutes(accessRoutes) // 动态添加可访问路由表
-                    // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
-                 next()
+                // 判断当前用户是否已拉取完user_info信息
+                store.dispatch('GetInfo').then(() => {
+                   store.dispatch('GenerateRoutes').then(accessRoutes => {
+                     router.addRoutes(accessRoutes)
+                    //确保动态路由添加已完成，然后才能放行 2023-05-26
+                    next({ ...to, replace: true }) 
                 })
+              })
             } else {
                 next()
             }

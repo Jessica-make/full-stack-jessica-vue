@@ -9,7 +9,7 @@
       正确解法，如果只有一个children,那么只展示一层，也就是父子合并
       如果没有children，也只展示一层，就展示本身meta的元素
     -->
-    <template v-if="hasOneShowChild(item.children,item)">
+    <template v-if="hasOneShowChild(item.children,item) && !item.alwaysShow">
       <app-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)">
           <menu-item
