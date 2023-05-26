@@ -33,8 +33,7 @@ export default {
     name:"Sidebar",
     data(){
         return {
-            variables,
-            isCollapse:true
+            variables
         }
     },
     components:{
@@ -42,7 +41,10 @@ export default {
         SidebarItem
     },
     computed:{
-      ...mapGetters(['sidebarRouters'])
+      ...mapGetters(['sidebarRouters','sidebar']),
+      isCollapse(){
+        return !this.sidebar.opened
+      }
     }
 }
 </script>

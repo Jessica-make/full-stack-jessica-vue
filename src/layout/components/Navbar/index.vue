@@ -21,7 +21,7 @@ export default {
   },
   methods:{
     toggleSideBar(){
-       console.log(111);
+       this.$store.dispatch('app/toggleSideBar')
     }
   }
 };

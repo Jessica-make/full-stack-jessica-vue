@@ -20,6 +20,8 @@
  
  import AppMain from './components/AppMain/index'
 
+ import { mapState } from 'vuex'
+
 export default {
     name:'Layout',
     components:{
@@ -31,10 +33,14 @@ export default {
     created(){
     },
     computed:{
+      ...mapState({
+          sidebar: state =>state.app.sidebar
+      }),
+
       //由vue管理的 :class 需要返回一个对象
       objClass(){
           return {
-            hideSidebar:true
+            hideSidebar:!this.sidebar.opened
           }
       }
     }
