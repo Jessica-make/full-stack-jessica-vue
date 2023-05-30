@@ -10,7 +10,10 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './permission'
 import './assets/icons'
 
+import RightToolBar from './components/RightToolBar/index'
+
 import '@/assets/styles/index.scss'
+import '@/assets/styles/Jessica.scss'
 
 import router from './router'
 
@@ -19,6 +22,9 @@ Vue.use(Element, {
 })
 
 Vue.config.productionTip = false
+
+//全局注册组件
+Vue.component('RightToolBar',RightToolBar)
 
 new Vue({
   router,
