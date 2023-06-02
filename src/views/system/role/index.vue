@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true">
-      <el-form-item label="角色名称">
+    <el-form :inline="true" ref="queryForm" :model="queryParams">
+      <el-form-item label="角色名称" prop="roleName">
         <el-input
           v-model="queryParams.roleName"
           placeholder="请输入角色名称"
@@ -10,7 +10,7 @@
         />
       </el-form-item>
 
-      <el-form-item label="权限字符">
+      <el-form-item label="权限字符" prop="roleKey">
         <el-input
           v-model="queryParams.roleKey"
           placeholder="请输入权限字符"
@@ -19,7 +19,7 @@
         />
       </el-form-item>
 
-      <el-form-item label="状态">
+      <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
           size="small"
@@ -154,10 +154,17 @@ export default {
     this.getList()
   },
   methods: {
-    handleQuery() {},
-    resetQuery() {},
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+    resetQuery() {
+      this.dateRange=[]
+      this.resetForm('queryForm')
+      this.handleQuery()
+    },
     getList(){
-      listRole(this.queryParams).then(res=>{
+      listRole(this.addDateRange(this.queryParams,this.dateRange)).then(res=>{
         this.roleList=res.rows;
         this.total=res.total
       })

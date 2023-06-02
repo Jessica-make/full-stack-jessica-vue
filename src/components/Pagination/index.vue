@@ -65,7 +65,6 @@ export default {
         return this.limit
       },
       set(val){
-        console.log('val ',val);
          this.$emit('update:limit',val)   
       }
     }

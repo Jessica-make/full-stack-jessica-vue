@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 import App from './App.vue'
 import store from './store'
 
+
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import './permission'
@@ -12,6 +13,9 @@ import './assets/icons'
 
 import RightToolBar from './components/RightToolBar/index'
 import Pagination from './components/Pagination/index'
+
+import {resetForm} from '@/utils/formUtils'
+import {addDateRange} from '@/utils/dateUtils'
 
 import '@/assets/styles/index.scss'
 import '@/assets/styles/Jessica.scss'
@@ -27,6 +31,10 @@ Vue.config.productionTip = false
 //全局注册组件
 Vue.component('RightToolBar',RightToolBar)
 Vue.component('Pagination',Pagination)
+
+//全局挂载方法
+Vue.prototype.resetForm=resetForm
+Vue.prototype.addDateRange=addDateRange
 
 new Vue({
   router,

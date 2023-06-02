@@ -3,6 +3,8 @@ import axios from 'axios'
 import {Message,MessageBox } from 'element-ui'
 import store from '@/store'
 
+import {transParams} from '@/utils/paramsUtils'
+
 import { getToken } from '@/utils/auth'
 
 // 是否显示重新登录
@@ -24,6 +26,18 @@ service.interceptors.request.use(config=>{
   if (getToken() && !isToken) {
     config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
+
+  //日期参数处理
+  if(config.method === 'get' && config.params){
+    //拼接url
+    var url=config.url + '?' + transParams(config.params)
+    url = url.slice(0, -1);
+
+    //参数填充到url 后面以后，需要清空config.params,防止下次继续拼接重复的
+    config.params={}
+    config.url=url
+  }
+
    return config
 })
 
