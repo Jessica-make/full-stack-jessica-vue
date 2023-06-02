@@ -11,6 +11,7 @@ import './permission'
 import './assets/icons'
 
 import RightToolBar from './components/RightToolBar/index'
+import Pagination from './components/Pagination/index'
 
 import '@/assets/styles/index.scss'
 import '@/assets/styles/Jessica.scss'
@@ -25,6 +26,7 @@ Vue.config.productionTip = false
 
 //全局注册组件
 Vue.component('RightToolBar',RightToolBar)
+Vue.component('Pagination',Pagination)
 
 new Vue({
   router,
