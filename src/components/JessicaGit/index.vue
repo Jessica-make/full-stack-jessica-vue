@@ -9,7 +9,6 @@ export default {
     name:'JessicaGit',
     methods:{
         goto(){
-            console.log(111);
             window.open('https://github.com/Jessica-make/full-stack-jessica-vue')
         }
     }

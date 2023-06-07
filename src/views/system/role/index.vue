@@ -65,12 +65,15 @@
 
         <el-col :span="1.5">
           <el-button type="success" size="mini" plain icon="el-icon-edit"
-            >修改</el-button
+            :disabled="single"
+            @click='handleUpdate'>修改</el-button
           >
         </el-col>
 
         <el-col :span="1.5">
           <el-button type="danger" size="mini" plain icon="el-icon-delete"
+           :disabled="emptyId"
+           @click="handleDelete"
             >删除</el-button
           >
         </el-col>
@@ -84,7 +87,7 @@
         <right-tool-bar></right-tool-bar>
       </el-row>
 
-      <el-table :data="roleList">
+      <el-table :data="roleList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column label="角色编号" prop="roleId" width="120"></el-table-column>
         <el-table-column label="角色名称" prop="roleName" width="150"></el-table-column>
@@ -102,7 +105,7 @@
                   修改
               </el-button>
 
-              <el-button size="mini" type="text" icon="el-icon-delete">
+              <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">
                   删除
               </el-button>
 
@@ -152,8 +155,11 @@
 
            <el-form-item label="状态">
                 <el-radio-group v-model="form.status">
-                   <el-radio>正常</el-radio>
-                   <el-radio>停用</el-radio>
+                   <el-radio v-for="dic in dict.type.sys_normal_disable" 
+                   :key="dic.value" :label="dic.value"
+                   >
+                      {{ dic.label }}
+                   </el-radio>
                 </el-radio-group>
            </el-form-item>
 
@@ -188,11 +194,12 @@
 </template>
 
 <script>
-import {listRole} from '@/api/system/role'
-import {treeselect as MenuTreeSelect} from '@/api/system/menu'
+import {listRole ,addRole, getRole, updateRole,delRole} from '@/api/system/role'
+import {treeselect as MenuTreeSelect,roleMenuTreeSelect} from '@/api/system/menu'
 
 export default {
   name: "Role",
+  dicts:['sys_normal_disable'],
   data() {
     return {
       dateRange: [],
@@ -222,7 +229,10 @@ export default {
       menuOptions:[],
       menuExpand:false,
       menuNodeAll:false,
-      menuCheckStrictly:false
+      menuCheckStrictly:false,
+      ids:[],
+      single:true,
+      emptyId:true
     };
   },
   created(){
@@ -250,6 +260,46 @@ export default {
       this.open=true
       this.title='新增角色'
     },
+    handleUpdate(row){
+      this.reset()
+      const roleId=row.roleId || this.ids
+
+      //获取初始菜单
+      const roleMenu=this.getRoleMenuTreeSelect(roleId)
+
+      //获取角色信息
+      getRole(roleId).then(response=>{
+           this.form=response.data
+           this.open=true
+
+           roleMenu.then(res=>{
+            let checkedkeys=res.checkedKeys
+            checkedkeys.forEach(v=>{
+              //第一个参数，key值
+              //第二个参数，是不是需要选中
+              //第三个参数，是不是需要递归子节点
+              this.$refs.menu.setChecked(v,true,false)
+            })
+           })
+      })
+
+    },
+    handleDelete(row){
+      const roleIdS=row.roleId || this.ids
+      this.$model.confirm(`是否确认删除角色编号为${roleIdS}的数据`).then(()=>{
+        return delRole(roleIdS)
+      }).then(()=>{
+         this.getList()
+         this.$model.msgSuccess('删除成功')
+      }).catch(()=>{})
+    },
+    getRoleMenuTreeSelect(roleId){
+      return roleMenuTreeSelect(roleId).then(res=>{
+        //获取修改的初始菜单
+          this.menuOptions=res.menus
+          return res
+      })
+    },
     cancel(){
       this.reset()
       this.open=false
@@ -257,11 +307,37 @@ export default {
     submitForm(){
       this.$refs['addForm'].validate(valid=>{
           if(valid){
-            console.log('valid');
+            this.form.menuIds=this.getMenuAllCheckedKeys()
+
+            //如果角色Id不为空，说明这是修改
+            if(this.form.roleId !==undefined){
+              updateRole(this.form).then(res=>{
+                this.$model.msgSuccess('修改成功')
+                this.open=false
+                this.getList()
+              })
+
+            }else{
+              addRole(this.form).then(res=>{
+                this.$model.msgSuccess('新增成功')
+                this.open=false
+                this.getList()
+              })
+            }
+
           }
       })
     },
     reset(){
+     this.menuExpand=false,
+     this.menuNodeAll=false,
+     this.menuCheckStrictly=true,
+     this.form={
+       menuIds:[],
+       roleSort:0,
+       status:'0'
+     }
+
       this.resetForm('addForm')
     },
     getMenuTreeSelect(){
@@ -286,7 +362,26 @@ export default {
         if(type === 'menu'){
            this.menuCheckStrictly=val
         }
+    },
+    getMenuAllCheckedKeys(){
+      const checkedKeys = this.$refs.menu.getCheckedKeys()
+      const halfCheckedKeys=this.$refs.menu.getHalfCheckedKeys()
+      return checkedKeys.concat(halfCheckedKeys).sort(function(a,b){return a-b}) 
+
+      //  checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
+      //  return checkedKeys
+    },
+    handleSelectionChange(selection){
+      //修改 不等于1为true,禁用 
+      this.single=selection.length !==1
+
+      //删除 初始状态selection.length=0 false,取反为true
+      //选择一个，selection.length=1 true,取反为false,可以操作
+      this.emptyId=!selection.length
+
+      this.ids=selection.map(item=>item.roleId)
+      
     }
-  },
+  }
 };
 </script>
